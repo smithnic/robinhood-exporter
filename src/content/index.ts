@@ -1,4 +1,5 @@
 import type { ExtractRequest, ExtractResponse } from '../lib/types.js';
+import { extractCrypto } from './extractCrypto.js';
 import { extractStocks } from './extractStocks.js';
 
 console.log('[robinhood-exporter] content script loaded on', location.href);
@@ -7,7 +8,7 @@ browser.runtime.onMessage.addListener(
   (message: unknown): Promise<ExtractResponse> | undefined => {
     if (!isExtractRequest(message)) return undefined;
     if (message.kind === 'stocks') return Promise.resolve(handleStocks());
-    return Promise.resolve({ ok: true, kind: 'crypto', rows: [] });
+    return Promise.resolve(handleCrypto());
   },
 );
 
@@ -21,9 +22,24 @@ function handleStocks(): ExtractResponse {
     };
   }
   if (skipped > 0) {
-    console.warn(`[robinhood-exporter] skipped ${skipped} row(s) that failed to parse`);
+    console.warn(`[robinhood-exporter] skipped ${skipped} stock row(s) that failed to parse`);
   }
   return { ok: true, kind: 'stocks', rows };
+}
+
+function handleCrypto(): ExtractResponse {
+  const { rows, skipped } = extractCrypto();
+  if (rows.length === 0) {
+    return {
+      ok: false,
+      error:
+        "Couldn't find any crypto positions on this page. Open robinhood.com/account/investing while signed in and scroll to the Crypto table, then try again.",
+    };
+  }
+  if (skipped > 0) {
+    console.warn(`[robinhood-exporter] skipped ${skipped} crypto row(s) that failed to parse`);
+  }
+  return { ok: true, kind: 'crypto', rows };
 }
 
 function isExtractRequest(value: unknown): value is ExtractRequest {

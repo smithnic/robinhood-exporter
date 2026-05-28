@@ -162,10 +162,17 @@ Notes:
 - `totalReturn` sign: derived from `price < averageCost`, not the SVG arrow. The displayed dollar amount is always positive; the up/down triangle is a fragile signal that's also redundant — `totalReturn = (price - averageCost) × shares` mathematically.
 - No unit tests yet — fixture is on disk; we can run it through jsdom later if Robinhood changes their markup.
 
-### Phase 4 — Crypto extractor (1–2 hrs)
-- [ ] Same as Phase 3 but for the crypto page. Different selectors, `quantity` instead of `shares`.
-- [ ] Fixture, validation, end-to-end test.
-- [ ] Commit.
+### Phase 4 — Crypto extractor (1–2 hrs) — ✅ done
+- [x] Same as Phase 3 but for the crypto page. Different selectors, `quantity` instead of `shares`.
+- [x] End-to-end test (live page).
+- [ ] Fixture (`tests/fixtures/crypto.html`) — TODO when convenient; not needed for v0.1.
+- [x] Commit.
+
+Notes:
+- Crypto is on the same `/account/investing` page as stocks, in a second table. Selector strategy is identical: walk `<a href="/crypto/SYMBOL">` anchors, descend single-child levels, expect a 7-cell row container.
+- Column order matches stocks exactly: `name, symbol, quantity, price, averageCost, totalReturn, equity`.
+- `totalReturn` sign rule (`price < averageCost` → negative) is reused unchanged.
+- No shared base extractor — duplicating the ~80 lines is cheaper than the right abstraction. If a third asset class ever shows up, extract then.
 
 ### Phase 5 — Polish (1 hr)
 - [ ] Icons (16/32/48/96/128).
