@@ -9,6 +9,9 @@ web-ext-artifacts/
 # Original extension source — for analysis only, do not commit.
 reference/
 
+# DOM fixtures contain personal portfolio data — keep on disk, never commit.
+tests/fixtures/*.html
+
 # OS / editor
 .DS_Store
 .vscode/

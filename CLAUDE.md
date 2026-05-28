@@ -122,29 +122,45 @@ We're going to copy the original's selector logic by *behavior*, not by code. Op
 
 ## Phased plan
 
-### Phase 1 — Scaffold (1 hr)
-- [ ] `npm init`, install Vite + TS + `webextension-polyfill` + `@types/firefox-webext-browser`.
-- [ ] Write `manifest.json` (see `BUILD.md`).
-- [ ] Empty popup that says "Hello", empty content script that logs, empty background SW.
-- [ ] Load in Firefox via `about:debugging`, confirm popup opens and content script logs on robinhood.com.
-- [ ] Commit.
+### Phase 1 — Scaffold (1 hr) — ✅ done (`c8feff6`)
+- [x] `npm init`, install Vite + TS + `webextension-polyfill` + `@types/firefox-webext-browser`.
+- [x] Write `manifest.json` (see `BUILD.md`).
+- [x] Empty popup that says "Hello", empty content script that logs, empty background SW.
+- [x] Load in Firefox via `about:debugging`, confirm popup opens and content script logs on robinhood.com.
+- [x] Commit.
 
-### Phase 2 — Popup UI + plumbing (1 hr)
-- [ ] Popup with two buttons (Stocks / Crypto) and a status area.
-- [ ] On click: send message to content script in active tab via `browser.tabs.sendMessage`.
-- [ ] Content script: register listener, respond with a stubbed `{ ok: true, rows: [] }` for now.
-- [ ] Popup handles the response, logs to console.
-- [ ] Detect "not on robinhood.com" case (tab URL check) and show the user a message + link.
-- [ ] Commit.
+Notes:
+- Used a hand-rolled two-config Vite build (`vite.config.ts` for popup+background as ES modules; `vite.content.config.ts` for content script as IIFE — MV3 `content_scripts` entries can't be modules). `npm run build` runs both sequentially.
+- Bumped `gecko.strict_min_version` to `140.0` (Android `142.0`) because Firefox now requires `data_collection_permissions` on new extensions. Declared `["none"]`.
+- Skipped the `icons` manifest block for now — Phase 5 polish.
 
-### Phase 3 — Stocks extractor (2–3 hrs)
-- [ ] Open robinhood.com positions page in DevTools, find the DOM structure for position rows.
-- [ ] Write `extractStocks.ts` — querySelector-based, returns `Position[]`.
-- [ ] Validate each row (numbers parse, symbol non-empty); collect failures separately.
-- [ ] Save HTML fixture to `tests/fixtures/stocks.html` (redact account numbers / personal info).
-- [ ] Wire into popup → CSV via `lib/csv.ts` → download via `lib/download.ts`.
-- [ ] Open the resulting CSV in a spreadsheet, eyeball it against the actual portfolio.
-- [ ] Commit.
+### Phase 2 — Popup UI + plumbing (1 hr) — ✅ done (`153a7b0`)
+- [x] Popup with two buttons (Stocks / Crypto) and a status area.
+- [x] On click: send message to content script in active tab via `browser.tabs.sendMessage`.
+- [x] Content script: register listener, respond with a stubbed `{ ok: true, rows: [] }` for now.
+- [x] Popup handles the response, logs to console.
+- [x] Detect "not on robinhood.com" case (tab URL check) and show the user a message + link.
+- [x] Commit.
+
+Notes:
+- Popup falls back to `browser.scripting.executeScript({ files: ['content/index.js'] })` and retries when `tabs.sendMessage` rejects (handles the case where the tab predates the extension load).
+- Message protocol lives in `src/lib/types.ts`: `{ type: 'EXTRACT', kind: 'stocks' | 'crypto' }` → `ExtractResponse` union with discriminated `ok`.
+
+### Phase 3 — Stocks extractor (2–3 hrs) — ✅ done
+- [x] Open Robinhood positions page in DevTools, confirm the exact URL (and that `*://*.robinhood.com/*` matches it), and update the popup link to point there.
+- [x] Find the DOM structure for position rows.
+- [x] Write `extractStocks.ts` — querySelector-based, returns `Position[]`.
+- [x] Validate each row (numbers parse, symbol non-empty); skip failures with a console warn.
+- [x] Save HTML fixture to `tests/fixtures/stocks.html` (50 rows from `/account/investing`).
+- [x] Wire into popup → CSV via `lib/csv.ts` → download via `lib/download.ts`.
+- [x] Open the resulting CSV in a spreadsheet, eyeball it against the actual portfolio.
+- [x] Commit.
+
+Notes:
+- The positions table lives at `https://robinhood.com/account/investing` — not `?classic=1` on the root, which is just the homepage sidebar widget. Popup link points at `/account/investing` now.
+- Row template: `<a href="/stocks/SYMBOL">` wrapping 3 single-child div levels, then a row container with exactly 7 cell `<div>` siblings: `name, symbol, shares, $price, $averageCost, $totalReturn, $equity`. Class names are Emotion-hashed (`qVizNsgJursdUUgiZtoQzg--`, etc.) and not stable — the extractor walks structure instead.
+- `totalReturn` sign: derived from `price < averageCost`, not the SVG arrow. The displayed dollar amount is always positive; the up/down triangle is a fragile signal that's also redundant — `totalReturn = (price - averageCost) × shares` mathematically.
+- No unit tests yet — fixture is on disk; we can run it through jsdom later if Robinhood changes their markup.
 
 ### Phase 4 — Crypto extractor (1–2 hrs)
 - [ ] Same as Phase 3 but for the crypto page. Different selectors, `quantity` instead of `shares`.

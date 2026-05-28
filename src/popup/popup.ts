@@ -1,3 +1,6 @@
+import { cryptoToCsv, stocksToCsv } from '../lib/csv.js';
+import { downloadCsv } from '../lib/download.js';
+import { csvFilename } from '../lib/filename.js';
 import type { ExtractKind, ExtractRequest, ExtractResponse } from '../lib/types.js';
 
 const readySection = document.getElementById('ready') as HTMLElement;
@@ -31,12 +34,14 @@ async function onExport(kind: ExtractKind): Promise<void> {
     }
     const req: ExtractRequest = { type: 'EXTRACT', kind };
     const res = await sendToContent(tab.id, req);
-    console.log('[robinhood-exporter] response', res);
     if (!res.ok) {
       showError(res.error);
       return;
     }
-    setStatus(`Got ${res.rows.length} ${kind} row(s). (CSV download not wired yet.)`);
+    const csv = res.kind === 'stocks' ? stocksToCsv(res.rows) : cryptoToCsv(res.rows);
+    const filename = csvFilename(res.kind);
+    await downloadCsv(csv, filename);
+    setStatus(`Downloaded ${res.rows.length} ${res.kind} row(s) → ${filename}`);
   } catch (err) {
     showError(errorMessage(err));
   } finally {
