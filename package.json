@@ -2,7 +2,7 @@
   "name": "robinhood-exporter",
   "version": "0.1.0",
   "private": true,
-  "description": "Firefox WebExtension that exports Robinhood positions to CSV.",
+  "description": "Firefox WebExtension that exports stock and crypto positions from robinhood.com to a local CSV file by reading the rendered DOM. Not affiliated with Robinhood Markets, Inc.",
   "type": "module",
   "scripts": {
     "build": "vite build && vite build -c vite.content.config.ts",

@@ -1,6 +1,8 @@
-# Robinhood Portfolio Exporter — Firefox Edition
+# Portfolio CSV Exporter for Robinhood — Firefox Edition
 
-A Firefox WebExtension that exports your Robinhood stock and crypto positions to CSV. It reads the rendered DOM on robinhood.com — no API access, no token, no credentials.
+A Firefox WebExtension that exports your stock and crypto positions from robinhood.com to a local CSV file. It reads the rendered DOM on the page you're already looking at — no API access, no token, no credentials, no network requests, no data collection.
+
+> Not affiliated with, endorsed by, or sponsored by Robinhood Markets, Inc. "Robinhood" is a trademark of Robinhood Markets, Inc. — used here only to describe what the extension reads.
 
 Inspired by the chrome extension [Robinhood Portfolio Exporter](https://chromewebstore.google.com/detail/robinhood-portfolio-exporter/hcmbkfnolnimohpflddfgghnijoafdhb); reimplemented from scratch for Firefox enjoyers.
 

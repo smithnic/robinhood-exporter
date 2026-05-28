@@ -66,3 +66,12 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.disclaimer {
+  font-size: 10px;
+  color: #888;
+  margin: 12px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
