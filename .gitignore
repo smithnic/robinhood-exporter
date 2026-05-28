@@ -1,0 +1,16 @@
+node_modules/
+dist/
+web-ext-artifacts/
+.web-ext/
+*.xpi
+*.crx
+*.zip
+
+# Original extension source — for analysis only, do not commit.
+reference/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.log
