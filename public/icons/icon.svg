@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="24" fill="#16a34a"/>
+
+  <!-- Down arrow -->
+  <path d="M57 14 h14 v22 h12 L64 56 L45 36 h12 z" fill="#ffffff"/>
+
+  <!-- Spreadsheet body -->
+  <rect x="22" y="64" width="84" height="54" rx="6" fill="#ffffff"/>
+
+  <!-- Grid (2 columns x 3 rows) -->
+  <g stroke="#16a34a" stroke-width="3" stroke-linecap="round">
+    <line x1="50" y1="68" x2="50" y2="114"/>
+    <line x1="78" y1="68" x2="78" y2="114"/>
+    <line x1="26" y1="80" x2="102" y2="80"/>
+    <line x1="26" y1="94" x2="102" y2="94"/>
+  </g>
+</svg>

@@ -26,6 +26,6 @@ export interface CryptoPosition {
 }
 
 export type ExtractResponse =
-  | { ok: true; kind: 'stocks'; rows: Position[] }
-  | { ok: true; kind: 'crypto'; rows: CryptoPosition[] }
+  | { ok: true; kind: 'stocks'; rows: Position[]; skipped: number }
+  | { ok: true; kind: 'crypto'; rows: CryptoPosition[]; skipped: number }
   | { ok: false; error: string };

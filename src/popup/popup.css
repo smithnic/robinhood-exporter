@@ -48,6 +48,16 @@ button:disabled {
   color: #b3261e;
 }
 
+.hint {
+  font-size: 11px;
+  margin: 0 0 8px;
+  padding: 6px 8px;
+  background: #fff8e1;
+  border: 1px solid #f0d98a;
+  border-radius: 4px;
+  color: #6b5b16;
+}
+
 a {
   color: #1a73e8;
   text-decoration: none;

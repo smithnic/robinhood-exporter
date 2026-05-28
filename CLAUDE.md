@@ -174,18 +174,15 @@ Notes:
 - `totalReturn` sign rule (`price < averageCost` → negative) is reused unchanged.
 - No shared base extractor — duplicating the ~80 lines is cheaper than the right abstraction. If a third asset class ever shows up, extract then.
 
-### Phase 5 — Polish (1 hr)
-- [ ] Icons (16/32/48/96/128).
-- [ ] Error states: not logged in, not on positions page, no rows found, parse failures.
-- [ ] README with install instructions.
-- [ ] `web-ext lint` clean.
-- [ ] Tag v0.1.0.
+### Phase 5 — Polish — ✅ done
+- [x] Icons (16/32/48/96/128). SVG source at `public/icons/icon.svg`, rasterized via `npm run icons` (`@resvg/resvg-js`). Manifest references PNGs for cross-browser compatibility.
+- [x] Error states. Extractors expose `urlMatches` vs `skipped` so the content script can distinguish "no positions on page" (wrong page / logged out) from "positions exist but markup changed". Popup shows a hint when on robinhood.com but not `/account/investing`, and appends `(N skipped)` to the success status when partial parse failures occur.
+- [x] README with install instructions.
+- [x] `web-ext lint` clean (0/0/0).
+- [x] Tag v0.1.0.
 
 ### Later (v0.2+)
 - Options positions (original doesn't support)
-- Date-range / historical data (would require API access, scope change)
-- Dividends history (ditto)
-- Auto-detect stocks vs crypto from current URL instead of two buttons
 
 ## Conventions
 - TypeScript strict mode on. No `any` without a justifying comment.

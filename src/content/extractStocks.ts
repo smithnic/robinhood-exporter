@@ -5,12 +5,17 @@ const STOCK_HREF_PREFIX_RE = /^\/stocks\//;
 
 export interface ExtractStocksResult {
   rows: Position[];
+  // Anchors whose href matched /stocks/SYMBOL. Distinguishes "no positions on
+  // page at all" (wrong page / logged out) from "positions exist but markup
+  // changed" (we found anchors but couldn't parse them).
+  urlMatches: number;
   skipped: number;
 }
 
 export function extractStocks(root: ParentNode = document): ExtractStocksResult {
   const anchors = root.querySelectorAll<HTMLAnchorElement>('a[href]');
   const rows: Position[] = [];
+  let urlMatches = 0;
   let skipped = 0;
 
   for (const anchor of anchors) {
@@ -23,6 +28,8 @@ export function extractStocks(root: ParentNode = document): ExtractStocksResult 
     const symbol = m[1] ?? '';
     if (!symbol) continue;
 
+    urlMatches++;
+
     const cells = findRowCells(anchor);
     if (!cells) continue;
 
@@ -34,7 +41,7 @@ export function extractStocks(root: ParentNode = document): ExtractStocksResult 
     }
   }
 
-  return { rows, skipped };
+  return { rows, urlMatches, skipped };
 }
 
 // The row container is reached by walking down single-child descendants of

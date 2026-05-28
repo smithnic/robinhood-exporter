@@ -5,9 +5,12 @@ import type { ExtractKind, ExtractRequest, ExtractResponse } from '../lib/types.
 
 const readySection = document.getElementById('ready') as HTMLElement;
 const notOnRhSection = document.getElementById('not-on-rh') as HTMLElement;
+const pageHintEl = document.getElementById('page-hint') as HTMLElement;
 const statusEl = document.getElementById('status') as HTMLElement;
 const stocksBtn = document.getElementById('export-stocks') as HTMLButtonElement;
 const cryptoBtn = document.getElementById('export-crypto') as HTMLButtonElement;
+
+const INVESTING_PATH = '/account/investing';
 
 stocksBtn.addEventListener('click', () => void onExport('stocks'));
 cryptoBtn.addEventListener('click', () => void onExport('crypto'));
@@ -19,6 +22,9 @@ async function init(): Promise<void> {
   if (!tab || !isRobinhoodUrl(tab.url)) {
     notOnRhSection.hidden = false;
     return;
+  }
+  if (!isInvestingPath(tab.url)) {
+    pageHintEl.hidden = false;
   }
   readySection.hidden = false;
 }
@@ -41,7 +47,11 @@ async function onExport(kind: ExtractKind): Promise<void> {
     const csv = res.kind === 'stocks' ? stocksToCsv(res.rows) : cryptoToCsv(res.rows);
     const filename = csvFilename(res.kind);
     await downloadCsv(csv, filename);
-    setStatus(`Downloaded ${res.rows.length} ${res.kind} row(s) → ${filename}`);
+    const suffix =
+      res.skipped > 0
+        ? ` (${res.skipped} skipped — markup may have changed)`
+        : '';
+    setStatus(`Downloaded ${res.rows.length} ${res.kind} row(s)${suffix} → ${filename}`);
   } catch (err) {
     showError(errorMessage(err));
   } finally {
@@ -72,6 +82,15 @@ function isRobinhoodUrl(url: string | undefined): boolean {
   try {
     const host = new URL(url).hostname;
     return host === 'robinhood.com' || host.endsWith('.robinhood.com');
+  } catch {
+    return false;
+  }
+}
+
+function isInvestingPath(url: string | undefined): boolean {
+  if (!url) return false;
+  try {
+    return new URL(url).pathname === INVESTING_PATH;
   } catch {
     return false;
   }

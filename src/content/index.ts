@@ -1,4 +1,4 @@
-import type { ExtractRequest, ExtractResponse } from '../lib/types.js';
+import type { ExtractKind, ExtractRequest, ExtractResponse } from '../lib/types.js';
 import { extractCrypto } from './extractCrypto.js';
 import { extractStocks } from './extractStocks.js';
 
@@ -13,33 +13,39 @@ browser.runtime.onMessage.addListener(
 );
 
 function handleStocks(): ExtractResponse {
-  const { rows, skipped } = extractStocks();
-  if (rows.length === 0) {
-    return {
-      ok: false,
-      error:
-        "Couldn't find any positions on this page. Open robinhood.com/account/investing while signed in, then try again.",
-    };
-  }
-  if (skipped > 0) {
-    console.warn(`[robinhood-exporter] skipped ${skipped} stock row(s) that failed to parse`);
-  }
-  return { ok: true, kind: 'stocks', rows };
+  const { rows, urlMatches, skipped } = extractStocks();
+  if (rows.length === 0) return failure('stocks', urlMatches);
+  if (skipped > 0) warnSkipped('stocks', skipped);
+  return { ok: true, kind: 'stocks', rows, skipped };
 }
 
 function handleCrypto(): ExtractResponse {
-  const { rows, skipped } = extractCrypto();
-  if (rows.length === 0) {
+  const { rows, urlMatches, skipped } = extractCrypto();
+  if (rows.length === 0) return failure('crypto', urlMatches);
+  if (skipped > 0) warnSkipped('crypto', skipped);
+  return { ok: true, kind: 'crypto', rows, skipped };
+}
+
+function failure(kind: ExtractKind, urlMatches: number): ExtractResponse {
+  const what = kind === 'stocks' ? 'stock positions' : 'crypto positions';
+  if (urlMatches === 0) {
     return {
       ok: false,
       error:
-        "Couldn't find any crypto positions on this page. Open robinhood.com/account/investing while signed in and scroll to the Crypto table, then try again.",
+        `Couldn't find any ${what} on this page. Open ` +
+        `robinhood.com/account/investing while signed in, then try again.`,
     };
   }
-  if (skipped > 0) {
-    console.warn(`[robinhood-exporter] skipped ${skipped} crypto row(s) that failed to parse`);
-  }
-  return { ok: true, kind: 'crypto', rows };
+  return {
+    ok: false,
+    error:
+      `Found ${urlMatches} ${kind} link(s) on the page but couldn't read any rows — ` +
+      `Robinhood's layout may have changed. Please file an issue.`,
+  };
+}
+
+function warnSkipped(kind: ExtractKind, skipped: number): void {
+  console.warn(`[robinhood-exporter] skipped ${skipped} ${kind} row(s) that failed to parse`);
 }
 
 function isExtractRequest(value: unknown): value is ExtractRequest {

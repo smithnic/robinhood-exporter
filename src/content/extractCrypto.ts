@@ -5,12 +5,15 @@ const CRYPTO_HREF_PREFIX_RE = /^\/crypto\//;
 
 export interface ExtractCryptoResult {
   rows: CryptoPosition[];
+  // See ExtractStocksResult.urlMatches.
+  urlMatches: number;
   skipped: number;
 }
 
 export function extractCrypto(root: ParentNode = document): ExtractCryptoResult {
   const anchors = root.querySelectorAll<HTMLAnchorElement>('a[href]');
   const rows: CryptoPosition[] = [];
+  let urlMatches = 0;
   let skipped = 0;
 
   for (const anchor of anchors) {
@@ -23,6 +26,8 @@ export function extractCrypto(root: ParentNode = document): ExtractCryptoResult 
     const symbol = m[1] ?? '';
     if (!symbol) continue;
 
+    urlMatches++;
+
     const cells = findRowCells(anchor);
     if (!cells) continue;
 
@@ -34,7 +39,7 @@ export function extractCrypto(root: ParentNode = document): ExtractCryptoResult 
     }
   }
 
-  return { rows, skipped };
+  return { rows, urlMatches, skipped };
 }
 
 function findRowCells(anchor: HTMLElement): HTMLElement[] | null {
