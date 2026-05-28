@@ -7,7 +7,23 @@
   </head>
   <body>
     <h1>Robinhood Exporter</h1>
-    <p id="status">Hello — scaffold loaded.</p>
+
+    <section id="ready" hidden>
+      <div class="actions">
+        <button id="export-stocks" type="button">Export Stocks</button>
+        <button id="export-crypto" type="button">Export Crypto</button>
+      </div>
+      <p id="status" class="status" aria-live="polite"></p>
+    </section>
+
+    <section id="not-on-rh" hidden>
+      <p class="status">
+        Open
+        <a href="https://robinhood.com/" target="_blank" rel="noopener">robinhood.com</a>
+        and navigate to a portfolio page, then click the extension again.
+      </p>
+    </section>
+
     <script type="module" src="./popup.ts"></script>
   </body>
 </html>
