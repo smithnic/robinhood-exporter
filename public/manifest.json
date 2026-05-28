@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Robinhood Portfolio Exporter (Firefox)",
+  "version": "0.1.0",
+  "description": "Export your Robinhood positions to CSV.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "robinhood-portfolio-exporter@smithnic.github.io",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  },
+  "action": {
+    "default_popup": "popup/index.html",
+    "default_title": "Export Robinhood Portfolio"
+  },
+  "background": {
+    "scripts": ["background/index.js"],
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://robinhood.com/*", "*://*.robinhood.com/*"],
+      "js": ["content/index.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["activeTab", "scripting", "downloads"],
+  "host_permissions": ["*://*.robinhood.com/*"]
+}

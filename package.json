@@ -1,0 +1,22 @@
+{
+  "name": "robinhood-exporter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Firefox WebExtension that exports Robinhood positions to CSV.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build && vite build -c vite.content.config.ts",
+    "typecheck": "tsc --noEmit",
+    "lint:ext": "web-ext lint --source-dir=./dist",
+    "run:firefox": "web-ext run --source-dir=./dist --target=firefox-desktop"
+  },
+  "devDependencies": {
+    "@types/firefox-webext-browser": "^143.0.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14",
+    "web-ext": "^10.2.0"
+  },
+  "dependencies": {
+    "webextension-polyfill": "^0.12.0"
+  }
+}
