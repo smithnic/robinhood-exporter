@@ -1,5 +1,7 @@
 # Portfolio CSV Exporter for Robinhood — Firefox Edition
 
+[![Get the add-on](https://img.shields.io/amo/v/portfolio-csv-for-robinhood?label=Firefox%20Add-on&logo=firefoxbrowser)](https://addons.mozilla.org/addon/portfolio-csv-for-robinhood/)
+
 A Firefox WebExtension that exports your stock and crypto positions from robinhood.com to a local CSV file. It reads the rendered DOM on the page you're already looking at — no API access, no token, no credentials, no network requests, no data collection.
 
 > Not affiliated with, endorsed by, or sponsored by Robinhood Markets, Inc. "Robinhood" is a trademark of Robinhood Markets, Inc. — used here only to describe what the extension reads.
@@ -27,9 +29,13 @@ Numbers are formatted to 3 decimals for shares/quantity and 2 decimals for price
 - Work when you're logged out or off the positions page — it scrapes what's rendered.
 - Collect user data. Everything is local in your web browser.
 
-## Install (from source)
+## Install
 
-Until this is signed and listed on AMO, it loads as a temporary add-on:
+**[Get it from Firefox Add-ons](https://addons.mozilla.org/addon/portfolio-csv-for-robinhood/)**
+
+### From source
+
+To run an unsigned build (e.g. for development), load it as a temporary add-on:
 
 1. Clone the repo and build:
    ```bash
